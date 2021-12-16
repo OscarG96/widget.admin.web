@@ -1,0 +1,16 @@
+.chatWindow {
+    border: solid thin;
+    width: 80%;
+    margin: auto;
+    margin-top: 60px;
+    height: 600px;
+    border-radius: 5px;
+}
+
+.chatWindow header {
+    display: flex;
+    height: 8%;
+    justify-content: center;
+    align-items: center;
+    background-color: skyblue;
+}

@@ -1,42 +1,44 @@
 import React from 'react'
-import { Form, Button, Container, Row, Col } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { FaGoogle } from 'react-icons/fa';
+import './login.css'
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 export default function Login() {
-    return (
-        <div>
-            <Container className="mt-4">
-                <Form>
-                    <Row>
-                        <h5>Log in</h5>
-                        <Col lg="6">
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" />
-                                <Form.Text className="text-muted">
-                                    We'll never share your email with anyone else.
-                                </Form.Text>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg="6">
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                                <Form.Check type="checkbox" label="Check me out" />
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-                </Form>
-            </Container>
 
-        </div>
+    const googleLogin = () => {
+        console.log('about to login')
+        const auth = getAuth();
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log(result)
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+                // ...
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                
+            });
+    }
+
+    return (
+        
+        <div >
+        <header id="showcase">
+            <h1>Welcome To The Widget App</h1>
+            <p>Before you start, please login with the button below</p>
+            <Button onClick={() => googleLogin()} variant="outline-dark"><i><FaGoogle /></i> Login with Google</Button>
+        </header>
+        </div >
     )
 }

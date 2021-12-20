@@ -6,7 +6,6 @@ import { AuthProvider } from "./Auth"
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import Home from "./components/Home"
-import Dashboard from './components/dashboard/Dashboard';
 import ChatWindow from './components/ChatWindow/ChatWindow';
 
 function App() {
@@ -15,10 +14,8 @@ function App() {
       <NavbarWrapper />
       <AuthProvider>
         <Router>
-          <PrivateRoute exact path="/" component={Home} />
+          <PrivateRoute exact path="/" component={ChatWindow} />
           <Route exact path="/login" component={Login} />
-          {/* <Login></Login> */}
-          <Route path="/dashboard" component={ChatWindow} />
         </Router>
       </AuthProvider>
       

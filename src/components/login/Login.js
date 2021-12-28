@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap'
 import { FaGoogle } from 'react-icons/fa';
 import './login.css'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createAgent } from '../../http.service';
 
 export default function Login() {
 
@@ -18,7 +19,7 @@ export default function Login() {
                 const token = credential.accessToken;
                 // The signed-in user info.
                 const user = result.user;
-                // ...
+                createAgent(user)
             }).catch((error) => {
                 // Handle Errors here.
                 const errorCode = error.code;

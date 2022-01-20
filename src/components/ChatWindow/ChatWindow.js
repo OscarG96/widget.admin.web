@@ -5,49 +5,56 @@ import { AuthContext } from '../../Auth.js'
 
 export default function ChatWindow() {
     const { io } = require("socket.io-client");
-    const socket = io('127.0.0.1:3000')
+    
     const { currentUser } = useContext(AuthContext);
-    const [currentRoom, setCurrentChat] = useState({})
+    const [currentchat, setCurrentChat] = useState('')
     const [chatLists, setChatLists] = useState([])
 
     const agentId = '1';
     const [input, setInput] = useState('');
 
     
-    useEffect(() => {
-
-        socket.on(`agent-${currentUser.uid}`, (data) => {
-            console.log(data);
-            appendMessageToList(data)
-        })
-
-        
-    }, []);
 
     const appendMessageToList = (data) => {
+        console.log(data)
+        console.log(chatLists)
+
         let userFound = chatLists.find(chat => chat.uuid === data.uuid)
         if (userFound) {
-            userFound.messages.push({text: data.message, type: 'received'})
-        } else {
-            userFound = {
-                name: data.username,
-                messages: [{
-                    text: data.message,
-                    type: 'received'
-                }],
-                uuid: data.uuid
-
+            const updatedUser = {
+                ...userFound,
+                messages: [ ...userFound.messages, { text: data.message, type: 'received' } ]
             }
-        }
-        console.log('user found' ,userFound)
-        setChatLists([...chatLists, userFound])
-        console.log(chatLists)
-    }
+            const updatedObject = chatLists.map(chat => 
+                chat.uuid === data.uuid ? updatedUser : chat
+            )
+            setChatLists(updatedObject)
+            
+        } else {
+            //append user
+            const updateChatLists = [
+                ...chatLists,
+                {
+                    name: data.username,
+                    messages: [{
+                        text: data.message,
+                        type: 'received'
+                    }],
+                    uuid: data.uuid
+    
+                }
+            ]
 
-    const sendMessageToSocket = (data) => {
-        console.log('send message to socket', data)
-        socket.emit("message-agent", data);
-    };
+            setChatLists(updateChatLists)
+        }
+        
+    }
+    // const appendMessageToList = (data) => {
+
+    //     setChatLists([...chatLists, data.message])
+    // }
+
+    
 
     const rooms = [
         {
@@ -81,7 +88,37 @@ export default function ChatWindow() {
     ]
 
    
+    useEffect(() => {
+        const socket = io('127.0.0.1:3000')
+        socket.on(`agent-${currentUser.uid}`, (data) => {
+            console.log(data);
+            appendMessageToList(data)
+        })
 
+        return () => {
+            socket.disconnect()
+        }
+
+        
+    }, [chatLists]);
+
+    useEffect(() => {
+
+        console.log('current chat', currentchat)
+
+        
+    }, [currentchat]);
+
+    const sendMessageToSocket = (message) => {
+        const socket = io('127.0.0.1:3000')
+        console.log('send message to socket', message)
+        let data = { message, uuid: currentchat }
+        socket.emit("message-agent", data);
+    };
+
+    // return (
+    //     <div>div</div>
+    // )
 
 
     return (
@@ -101,7 +138,7 @@ export default function ChatWindow() {
 
                             {
                                 chatLists.map(chat => (
-                                    <a href="#" className="list-group-item list-group-item-action border-0" key={chat.id} onClick={() => setCurrentChat(chat)}>
+                                    <a href="#" className="list-group-item list-group-item-action border-0" key={chat.uuid} onClick={() => setCurrentChat(chat.uuid)}>
                                         <div className="badge bg-success float-right">5</div>
                                         <div className="d-flex align-items-start">
                                             {/* <img src="https://bootdey.com/img/Content/avatar/avatar5.png" className="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40" /> */}
@@ -122,7 +159,7 @@ export default function ChatWindow() {
                                         <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
                                     </div> */}
                                     <div className="flex-grow-1 pl-3">
-                                        <strong>{currentRoom.name}</strong>
+                                        {/* <strong>{currentchat ? chatLists.find(chat => chat.uuid == currentchat).name : ''}</strong> */}
                                         <div className="text-muted small"><em>Typing...</em></div>
                                     </div>
 
@@ -133,8 +170,8 @@ export default function ChatWindow() {
                                 <div className="chat-messages p-4">
 
                                     {
-                                        currentRoom.messages && currentRoom.messages.map(message => {
-                                            if (message.userId == agentId) {
+                                        (currentchat && chatLists.length > 0) ?  chatLists.find(chat => chat.uuid == currentchat).messages.map(message => {
+                                            if (message.type == 'sent') {
                                                 return (
                                                     <div className="chat-message-right pb-4">
                                                         <div>
@@ -155,12 +192,12 @@ export default function ChatWindow() {
                                                         <div className="text-muted small text-nowrap mt-2">2:34 am</div>
                                                     </div>
                                                     <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                        <div className="font-weight-bold mb-1">{currentRoom.name}</div>
+                                                        <div className="font-weight-bold mb-1">{chatLists.find(chat => chat.uuid == currentchat).name}</div>
                                                         {message.text}
                                                     </div>
                                                 </div>)
                                             }
-                                        })
+                                        }) : <p>No messages</p>
                                     }
 
                                 </div>

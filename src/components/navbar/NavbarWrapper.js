@@ -1,13 +1,11 @@
-import React from 'react'
-import { Navbar, Container, Nav, Offcanvas, NavDropdown, Form, FormControl, Button } from 'react-bootstrap';
+import React, { useContext, useState } from 'react'
+import { Navbar, Container, Nav, Offcanvas, NavDropdown, Form, FormControl, Button, Image, Dropdown } from 'react-bootstrap';
 import { getAuth, signOut } from "firebase/auth";
+import { AuthContext } from '../../Auth';
 
 export default function NavbarWrapper() {
+    const { currentUser } = useContext(AuthContext);
 
-
-    
-    
-    
     const signout = () => {
         const auth = getAuth();
         signOut(auth).then(() => {
@@ -18,46 +16,76 @@ export default function NavbarWrapper() {
             // An error happened.
         });
     }
+    // <Button onClick={() => signout()} variant="outline-dark">Sign out</Button>
+    // The forwardRef is important!!
+    // Dropdown needs access to the DOM node in order to position the Menu
+    const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+        <a
+            href=""
+            ref={ref}
+            onClick={(e) => {
+                e.preventDefault();
+                onClick(e);
+            }}
+            
+        >
+            {children}
+            
+        </a>
+    ));
 
-    return (
-        <Navbar bg="dark" variant="dark" expand={false}>
-            <Container fluid>
-                <Navbar.Brand href="#">PetrolHeads</Navbar.Brand>
-                <Navbar.Toggle aria-controls="offcanvasNavbar" />
-                <Navbar.Offcanvas
-                    id="offcanvasNavbar"
-                    aria-labelledby="offcanvasNavbarLabel"
-                    placement="end"
+    // forwardRef again here!
+    // Dropdown needs access to the DOM of the Menu to measure it
+    const CustomMenu = React.forwardRef(
+        ({ children, style, className, 'aria-labelledby': labeledBy }, ref) => {
+            const [value, setValue] = useState('');
+
+            return (
+                <div
+                    ref={ref}
+                    style={style}
+                    className={className}
+                    aria-labelledby={labeledBy}
                 >
-                    <Offcanvas.Header closeButton>
-                        <Offcanvas.Title id="offcanvasNavbarLabel">Offcanvas</Offcanvas.Title>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        <Nav className="justify-content-end flex-grow-1 pe-3">
-                            <Button onClick={() => signout()} variant="outline-dark">Sign out</Button>
-                            <Nav.Link href="#action1">Home</Nav.Link>
-                            <Nav.Link href="#action2">Link</Nav.Link>
-                            <NavDropdown title="Dropdown" id="offcanvasNavbarDropdown">
-                                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                                <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-                                <NavDropdown.Divider />
-                                <NavDropdown.Item href="#action5">
-                                    Something else here
-                                </NavDropdown.Item>
-                            </NavDropdown>
-                        </Nav>
-                        <Form className="d-flex">
-                            <FormControl
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                            />
-                            <Button variant="outline-success">Search</Button>
-                        </Form>
-                    </Offcanvas.Body>
-                </Navbar.Offcanvas>
+                    <p>{currentUser.displayName}</p>
+                    <ul className="list-unstyled">
+                        {React.Children.toArray(children).filter(
+                            (child) =>
+                                !value || child.props.children.toLowerCase().startsWith(value),
+                        )}
+                    </ul>
+                    <Button onClick={() => signout()} variant="outline-dark">Sign out</Button>
+                </div>
+            );
+        },
+    );
+
+    return (<>
+
+        <Navbar bg="dark" variant="dark">
+            <Container>
+            <Navbar.Brand href="#home" style={{ 'marginLeft': '10px' }}>
+                {/* <img
+                    alt=""
+                    src="/logo.svg"
+                    width="30"
+                    height="30"
+                    className="d-inline-block align-top"
+                />{' '} */}
+                ChatWidget
+            </Navbar.Brand>
+            <Navbar.Collapse className="justify-content-end" style={{ 'marginRight': '10px' }}>
+                <Dropdown>
+                    <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
+                        <Image style={{ 'width': '45px', 'height': '45px' }} referrerPolicy='no-referrer' src='https://lh3.googleusercontent.com/a/AATXAJyn6CxzHk3Tdzc18rqYs6SytckIdHJPKkm5hLHU=s96-c' roundedCircle='true' />
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu as={CustomMenu}>
+                        
+                    </Dropdown.Menu>
+                </Dropdown>
+            </Navbar.Collapse>
             </Container>
         </Navbar>
-    )
+    </>)
 }

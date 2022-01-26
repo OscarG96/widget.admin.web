@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useState } from 'react'
 import './chatwindow.css'
 import { AuthContext } from '../../Auth.js'
+import NavbarWrapper from '../navbar/NavbarWrapper'
 
 export default function ChatWindow() {
     const { io } = require("socket.io-client");
@@ -122,6 +123,10 @@ export default function ChatWindow() {
 
 
     return (
+        <>
+        <NavbarWrapper />
+        
+        
         <main className="content mt-5">
             <div className="container p-0">
                 <div className="card">
@@ -215,5 +220,6 @@ export default function ChatWindow() {
                 </div>
             </div>
         </main>
+        </>
     )
 }

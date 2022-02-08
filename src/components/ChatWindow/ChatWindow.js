@@ -3,10 +3,11 @@ import { useState } from 'react'
 import './chatwindow.css'
 import { AuthContext } from '../../Auth.js'
 import NavbarWrapper from '../navbar/NavbarWrapper'
+import { SocketContext } from '../../Socket'
 
 export default function ChatWindow() {
-    const { io } = require("socket.io-client");
-    
+    const socket = useContext(SocketContext)
+
     const { currentUser } = useContext(AuthContext);
     const [currentchat, setCurrentChat] = useState('')
     const [chatLists, setChatLists] = useState([])
@@ -14,7 +15,7 @@ export default function ChatWindow() {
     const agentId = '1';
     const [input, setInput] = useState('');
 
-    
+
 
     const appendMessageToList = (data) => {
         console.log(data)
@@ -26,11 +27,11 @@ export default function ChatWindow() {
                 ...userFound,
                 messages: [ ...userFound.messages, { text: data.message, type: 'received' } ]
             }
-            const updatedObject = chatLists.map(chat => 
+            const updatedObject = chatLists.map(chat =>
                 chat.uuid === data.uuid ? updatedUser : chat
             )
             setChatLists(updatedObject)
-            
+
         } else {
             //append user
             const updateChatLists = [
@@ -42,76 +43,38 @@ export default function ChatWindow() {
                         type: 'received'
                     }],
                     uuid: data.uuid
-    
+
                 }
             ]
 
             setChatLists(updateChatLists)
         }
-        
+
     }
-    // const appendMessageToList = (data) => {
-
-    //     setChatLists([...chatLists, data.message])
-    // }
-
     
-
-    const rooms = [
-        {
-            name: 'Oscar',
-            messages: [
-                {
-                    text: 'hello there',
-                    type: 'received'
-                },
-                {
-                    text: 'Hello',
-                    type: 'sent'
-                }
-            ],
-            id: '3472983742-12093h'
-        },
-        {
-            name: 'Ricardo',
-            messages: [
-                {
-                    text: 'Hi, I was wondering if you could help me with something',
-                    type: 'received'
-                },
-                {
-                    text: 'Sure',
-                    type: 'sent'
-                }
-            ],
-            id: '182379124n-12o38u8o'
-        }
-    ]
-
-   
     useEffect(() => {
-        const socket = io('127.0.0.1:3000')
+        // const socket = io('127.0.0.1:3000')
         socket.on(`agent-${currentUser.uid}`, (data) => {
             console.log(data);
             appendMessageToList(data)
         })
 
         return () => {
-            socket.disconnect()
+            // socket.disconnect()
         }
 
-        
+
     }, [chatLists]);
 
     useEffect(() => {
 
         console.log('current chat', currentchat)
 
-        
+
     }, [currentchat]);
 
     const sendMessageToSocket = (message) => {
-        const socket = io('127.0.0.1:3000')
+        // const socket = io('127.0.0.1:3000')
         console.log('send message to socket', message)
         let data = { message, uuid: currentchat }
         socket.emit("message-agent", data);
@@ -125,8 +88,8 @@ export default function ChatWindow() {
     return (
         <>
         <NavbarWrapper />
-        
-        
+
+
         <main className="content mt-5">
             <div className="container p-0">
                 <div className="card">

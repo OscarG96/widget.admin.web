@@ -6,16 +6,19 @@ import { AuthProvider } from "./Auth"
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import ChatWindow from './components/ChatWindow/ChatWindow';
+import { SocketContext, socket } from './Socket.js'
 
 function App() {
   return (
     <div className="App">
       
       <AuthProvider>
-        <Router>
-          <PrivateRoute exact path="/" component={ChatWindow} />
-          <Route exact path="/login" component={Login} />
-        </Router>
+          <Router>
+            <SocketContext.Provider value={socket} >
+              <PrivateRoute exact path="/" component={ChatWindow} />
+              <Route exact path="/login" component={Login} />
+            </SocketContext.Provider>
+          </Router>
       </AuthProvider>
       
     </div>

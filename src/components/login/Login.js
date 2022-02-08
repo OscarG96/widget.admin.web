@@ -4,9 +4,10 @@ import { FaGoogle } from 'react-icons/fa';
 import './login.css'
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { createAgent } from '../../http.service';
+import { useHistory } from "react-router";
 
 export default function Login() {
-
+    const history = useHistory()
     const googleLogin = () => {
         console.log('about to login')
         const auth = getAuth();
@@ -20,6 +21,7 @@ export default function Login() {
                 // The signed-in user info.
                 const user = result.user;
                 createAgent(user)
+                history.push("/")
             }).catch((error) => {
                 // Handle Errors here.
                 const errorCode = error.code;

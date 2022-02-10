@@ -12,7 +12,6 @@ export default function ChatWindow() {
     const [currentchat, setCurrentChat] = useState('')
     const [chatLists, setChatLists] = useState([])
 
-    const agentId = '1';
     const [input, setInput] = useState('');
 
 
@@ -138,8 +137,8 @@ export default function ChatWindow() {
                                 <div className="chat-messages p-4">
 
                                     {
-                                        (currentchat && chatLists.length > 0) ?  chatLists.find(chat => chat.uuid == currentchat).messages.map(message => {
-                                            if (message.type == 'sent') {
+                                        (currentchat && chatLists.length > 0) ?  chatLists.find(chat => chat.uuid === currentchat).messages.map(message => {
+                                            if (message.type === 'sent') {
                                                 return (
                                                     <div className="chat-message-right pb-4">
                                                         <div>
@@ -160,7 +159,7 @@ export default function ChatWindow() {
                                                         <div className="text-muted small text-nowrap mt-2">2:34 am</div>
                                                     </div>
                                                     <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                        <div className="font-weight-bold mb-1">{chatLists.find(chat => chat.uuid == currentchat).name}</div>
+                                                        <div className="font-weight-bold mb-1">{chatLists.find(chat => chat.uuid === currentchat).name}</div>
                                                         {message.text}
                                                     </div>
                                                 </div>)

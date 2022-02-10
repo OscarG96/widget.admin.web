@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import app from './firebase.init'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { setCookie } from './helpers/cookies';
 
 export const AuthContext = React.createContext();
 
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
         onAuthStateChanged(auth, (user) => {
             console.log('auth state changed', user)
             setCurrentUser(user)
+            setCookie('token', user.uid, 7)
             setPending(false)
         }, (error) => {
             console.error(error)

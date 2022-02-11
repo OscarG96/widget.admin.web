@@ -77,7 +77,7 @@ export default function NavbarWrapper() {
             <Navbar.Collapse className="justify-content-end" style={{ 'marginRight': '10px' }}>
                 <Dropdown>
                     <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
-                        <Image style={{ 'width': '45px', 'height': '45px' }} referrerPolicy='no-referrer' src='https://lh3.googleusercontent.com/a/AATXAJyn6CxzHk3Tdzc18rqYs6SytckIdHJPKkm5hLHU=s96-c' roundedCircle='true' />
+                        <Image style={{ 'width': '45px', 'height': '45px' }} referrerPolicy='no-referrer' src={currentUser.photoURL} roundedCircle='true' />
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu as={CustomMenu}>

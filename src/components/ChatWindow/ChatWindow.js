@@ -127,7 +127,7 @@ export default function ChatWindow() {
                                     </div> */}
                                     <div className="flex-grow-1 pl-3">
                                         {/* <strong>{currentchat ? chatLists.find(chat => chat.uuid == currentchat).name : ''}</strong> */}
-                                        <div className="text-muted small"><em>Typing...</em></div>
+                                        
                                     </div>
 
                                 </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { useState } from 'react'
 import './chatwindow.css'
 import { AuthContext } from '../../Auth.js'
@@ -11,7 +11,7 @@ export default function ChatWindow() {
     const { currentUser } = useContext(AuthContext);
     const [currentchat, setCurrentChat] = useState('')
     const [chatLists, setChatLists] = useState([])
-
+    const inputEl = useRef(null)
     const [input, setInput] = useState('');
 
 
@@ -24,7 +24,7 @@ export default function ChatWindow() {
         if (userFound) {
             const updatedUser = {
                 ...userFound,
-                messages: [ ...userFound.messages, { text: data.message, type: 'received' } ]
+                messages: [ ...userFound.messages, { text: data.message, type: data.type } ]
             }
             const updatedObject = chatLists.map(chat =>
                 chat.uuid === data.uuid ? updatedUser : chat
@@ -55,6 +55,7 @@ export default function ChatWindow() {
         // const socket = io('127.0.0.1:3000')
         socket.on(`agent-${currentUser.uid}`, (data) => {
             console.log(data);
+            data.type = 'received'
             appendMessageToList(data)
         })
 
@@ -65,18 +66,20 @@ export default function ChatWindow() {
 
     }, [chatLists]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        console.log('current chat', currentchat)
+    //     console.log('current chat', currentchat)
 
 
-    }, [currentchat]);
+    // }, [currentchat]);
 
     const sendMessageToSocket = (message) => {
         // const socket = io('127.0.0.1:3000')
         console.log('send message to socket', message)
-        let data = { message, uuid: currentchat }
+        let data = { message, uuid: currentchat, type: 'sent' }
         socket.emit("message-agent", data);
+        appendMessageToList(data)
+        inputEl.current.value = ''
     };
 
     // return (
@@ -172,8 +175,8 @@ export default function ChatWindow() {
 
                             <div className="flex-grow-0 py-3 px-4 border-top">
                                 <div className="input-group">
-                                    <input value={input} onInput={e => setInput(e.target.value)} type="text" className="form-control" placeholder="Type your message" />
-                                    <button onClick={() => sendMessageToSocket(input)} className="btn btn-primary">Send</button>
+                                    <input ref={inputEl} type="text" className="form-control" placeholder="Type your message" />
+                                    <button onClick={() => sendMessageToSocket(inputEl.current.value)} className="btn btn-primary">Send</button>
                                 </div>
                             </div>
 

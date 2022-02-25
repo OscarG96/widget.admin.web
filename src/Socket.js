@@ -1,5 +1,5 @@
 import React from 'react';
-import io from 'socket.io-client'
+import io from 'socket.io-client'   
 import { getCookie } from './helpers/cookies';
 const URL = '127.0.0.1:3000'
 const token = getCookie('token')

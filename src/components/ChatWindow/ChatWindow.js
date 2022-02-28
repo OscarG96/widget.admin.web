@@ -7,13 +7,40 @@ import { SocketContext } from '../../Socket'
 import { getCookie } from '../../helpers/cookies'
 import io from 'socket.io-client'
 
-function reducer(state, payload) {
-    return [ ...state, payload ]
+function reducer(state, data) {
+    let userFound = state.find(chat => chat.uuid === data.uuid)
+    if (userFound) {
+        const updatedUser = {
+            ...userFound,
+            messages: [...userFound.messages, { text: data.message, type: data.type }]
+        }
+        const updatedObject = state.map(chat =>
+            chat.uuid === data.uuid ? updatedUser : chat
+        )
+        return updatedObject
+
+    } else {
+        //append user
+        const updateChatLists = [
+            ...state,
+            {
+                name: data.username,
+                messages: [{
+                    text: data.message,
+                    type: data.type
+                }],
+                uuid: data.uuid
+
+            }
+        ]
+
+        return updateChatLists
+    }
 }
 
 const initialState = { list: [] };
 const socket = io('127.0.0.1:3000')
-export default function ChatWindow({initialCount}) {
+export default function ChatWindow({ initialCount }) {
     // const socket = useContext(SocketContext)
     const { currentUser } = useContext(AuthContext);
     const [currentchat, setCurrentChat] = useState('')
@@ -25,54 +52,10 @@ export default function ChatWindow({initialCount}) {
         // const socket = io('127.0.0.1:3000')
         socket.on(`agent-${currentUser.uid}`, (data) => {
             console.log('message from websocket', data);
-            // data.type = 'received'
-            // appendMessageToList(data)
+            data.type = 'received'
             dispatch(data)
-            // showLoading(data);
         })
     }, []);
-
-
-
-
-
-
-
-
-
-    const appendMessageToList = (data) => {
-        let userFound = chatLists.find(chat => chat.uuid === data.uuid)
-        if (userFound) {
-            const updatedUser = {
-                ...userFound,
-                messages: [...userFound.messages, { text: data.message, type: data.type }]
-            }
-            const updatedObject = chatLists.map(chat =>
-                chat.uuid === data.uuid ? updatedUser : chat
-            )
-            setChatLists(updatedObject)
-
-        } else {
-            //append user
-            const updateChatLists = [
-                ...chatLists,
-                {
-                    name: data.username,
-                    messages: [{
-                        text: data.message,
-                        type: data.type
-                    }],
-                    uuid: data.uuid
-
-                }
-            ]
-
-            setChatLists(updateChatLists)
-        }
-
-    }
-
-
 
     const sendMessageToSocket = (message) => {
         // const socket = io('127.0.0.1:3000')
@@ -80,7 +63,7 @@ export default function ChatWindow({initialCount}) {
         const agent = getCookie('token')
         let data = { message, uuid: currentchat, type: 'sent', agent }
         socket.emit("message-agent", data);
-        appendMessageToList(data)
+        dispatch(data)
         inputEl.current.value = ''
     };
 
@@ -107,7 +90,7 @@ export default function ChatWindow({initialCount}) {
                                 </div>
 
                                 {
-                                    chatLists.map(chat => (
+                                    state.map(chat => (
                                         <a href="#" className="list-group-item list-group-item-action border-0" key={chat.uuid} onClick={() => setCurrentChat(chat.uuid)}>
                                             {/* <div className="badge bg-success float-right">5</div> */}
                                             <div className="d-flex align-items-start">
@@ -139,8 +122,8 @@ export default function ChatWindow({initialCount}) {
                                 <div className="position-relative">
                                     <div className="chat-messages p-4">
 
-                                        {/* {
-                                        chatLists.length > 0 && currentchat && chatLists.find(chat => chat.uuid === currentchat).messages.map(message => {
+                                        {
+                                        state.length > 0 && currentchat && state.find(chat => chat.uuid === currentchat).messages.map(message => {
                                             if (message.type === 'sent') {
                                                 return (
                                                     <div className="chat-message-right pb-4">
@@ -162,13 +145,13 @@ export default function ChatWindow({initialCount}) {
                                                         <div className="text-muted small text-nowrap mt-2">2:34 am</div>
                                                     </div>
                                                     <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                                        <div className="font-weight-bold mb-1">{chatLists.find(chat => chat.uuid === currentchat).name}</div>
+                                                        <div className="font-weight-bold mb-1">{state.find(chat => chat.uuid === currentchat).name}</div>
                                                         {message.text}
                                                     </div>
                                                 </div>)
                                             }
                                         })
-                                    } */}
+                                    }
 
                                     </div>
                                 </div>

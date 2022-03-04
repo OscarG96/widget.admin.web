@@ -106,13 +106,13 @@ export default function ChatWindow({ initialCount }) {
                                 <hr className="d-block d-lg-none mt-1 mb-0" />
                             </div>
                             <div className="col-12 col-lg-7 col-xl-9">
-                                <div className="py-2 px-4 border-bottom d-none d-lg-block">
+                                <div className="py-2 px-4 border-bottom d-none d-lg-block chat-header">
                                     <div className="d-flex align-items-center py-1">
                                         {/* <div className="position-relative">
                                         <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
                                     </div> */}
                                         <div className="flex-grow-1 pl-3">
-                                            {/* <strong>{ chatLists.length > 0 && currentchat && chatLists.find(chat => chat.uuid == currentchat).name }</strong> */}
+                                            <strong>{ state.length > 0 && currentchat && state.find(chat => chat.uuid == currentchat).name }</strong>
 
                                         </div>
 
@@ -127,10 +127,6 @@ export default function ChatWindow({ initialCount }) {
                                             if (message.type === 'sent') {
                                                 return (
                                                     <div className="chat-message-right pb-4">
-                                                        <div>
-                                                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" className="rounded-circle mr-1" alt="Chris Wood" width="40" height="40" />
-                                                            <div className="text-muted small text-nowrap mt-2">2:33 am</div>
-                                                        </div>
                                                         <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
                                                             <div className="font-weight-bold mb-1">You</div>
                                                             {message.text}
@@ -140,10 +136,6 @@ export default function ChatWindow({ initialCount }) {
                                                 )
                                             } else {
                                                 return (<div className="chat-message-left pb-4">
-                                                    <div>
-                                                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" className="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40" />
-                                                        <div className="text-muted small text-nowrap mt-2">2:34 am</div>
-                                                    </div>
                                                     <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
                                                         <div className="font-weight-bold mb-1">{state.find(chat => chat.uuid === currentchat).name}</div>
                                                         {message.text}
@@ -156,7 +148,7 @@ export default function ChatWindow({ initialCount }) {
                                     </div>
                                 </div>
 
-                                <div className="flex-grow-0 py-3 px-4 border-top">
+                                <div className="flex-grow-0 py-3 px-4 border-top chat-footer">
                                     <div className="input-group">
                                         <input ref={inputEl} type="text" className="form-control" placeholder="Type your message" />
                                         <button onClick={() => sendMessageToSocket(inputEl.current.value)} className="btn btn-primary">Send</button>

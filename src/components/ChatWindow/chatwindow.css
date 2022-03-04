@@ -13,7 +13,7 @@ body{margin-top:20px;}
     flex-direction: column;
     height: 400px;
     overflow-y: scroll;
-    
+    background-color: #dee2e6;
 }
 
 .chat-message-left,
@@ -47,4 +47,13 @@ body{margin-top:20px;}
 
 .chat-list {
     border-right: solid thin;
+    background-color: #dee2e6 ;
+}
+
+.chat-header {
+    background-color: #c2c5c9;
+}
+
+.chat-footer {
+    background-color: #c2c5c9;
 }
